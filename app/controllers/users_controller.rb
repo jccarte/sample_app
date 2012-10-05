@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_filter :signed_in_user, only: [:edit, :update, :index, :destroy]
   before_filter :correct_user,    only: [:edit, :update]
+  before_filter :already_signed_in, only: [ :new, :create ]
   before_filter :admin_user,      only: :destroy
 
   def show
@@ -54,7 +55,7 @@ class UsersController < ApplicationController
 
     def signed_in_user
       unless signed_in?
-      store_location
+        store_location
         redirect_to signin_url, notice: "Please sign in."
       end
     end
@@ -63,4 +64,9 @@ class UsersController < ApplicationController
       @user = User.find(params[:id])
       redirect_to(root_path) unless current_user?(@user)
     end
+
+    def already_signed_in
+      redirect_to(root_path) if signed_in?
+    end
+
   end
